@@ -49,14 +49,17 @@ func Initdb() {
 	defer db.Close()
 }
 
-func InsertFirmen() {
+func InsertFirmen(fi models.Firma) {
 	db, err := sql.Open("mysql", DBUser+":"+DBPassword+"@tcp("+DBHost+":"+DBPort+")/"+DBName)
 
+	fmt.Printf("insertFirma got Name %s\n", fi.Name)
+	fmt.Printf("insertFirma got Enabled %s\n", fi.Enabled)
+	fmt.Println(fi.Name)
 	res2, err := db.Query(`
 	insert into Firmen (			
 		Name,
 		Enabled) values (
-			"TestFirma", "1"
+			"` + fi.Name + `" , " ` + string(fi.Enabled) + `"
 		);
 	`)
 

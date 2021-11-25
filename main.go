@@ -37,12 +37,24 @@ func EnableCors(w *http.ResponseWriter) {
 func createFirma(w http.ResponseWriter, r *http.Request) {
 	EnableCors(&w)
 	reqBody, err := ioutil.ReadAll(r.Body)
-
-	if err != nil {
-		fmt.Printf("delFirma error: %s \n", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 	fmt.Printf("createFirma got: %s\n", reqBody)
+	if err != nil {
+		fmt.Printf("createFirma error: %s \n", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	} else {
+		m := models.Firma{}
+		err := json.Unmarshal(reqBody, &m)
+		if err != nil {
+			fmt.Printf("createFirma Error on json.unmarshal: %s", err)
+			//http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		} else {
+			//fmt.Printf("del-ID: %d\n", m.Id)
+			lib.InsertFirmen(m)
+		}
+
+	}
+
 }
 
 func delFirma(w http.ResponseWriter, r *http.Request) {
@@ -59,6 +71,8 @@ func delFirma(w http.ResponseWriter, r *http.Request) {
 		m := models.Firma{}
 		err := json.Unmarshal(reqBody, &m)
 		if err != nil {
+			fmt.Printf("delFirma Error on json.unmarshal: %s", err)
+			//http.Error(w, err.Error(), http.StatusInternalServerError)
 
 		} else {
 			fmt.Printf("del-ID: %d\n", m.Id)

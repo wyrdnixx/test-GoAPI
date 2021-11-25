@@ -19,9 +19,9 @@ type ToggleEntry struct {
 
 ///////// Firmen
 type Firma struct {
-	Id      int    `json:"id"`
-	Name    string `json:"name"`
-	Enabled int    `json:"enabled"`
+	Id      int    `json:"Id"`
+	Name    string `json:"Name"`
+	Enabled int    `json:"Enabled"`
 }
 type Firmen struct {
 	Firmen []Firma `json:"Firmen"`

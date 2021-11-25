@@ -29,10 +29,10 @@
       <div id="Results">
         <table>
        <tr  v-for="per in this.info.Firmen" v-bind:key="per.Id">
-            <td>{{per.id}}</td>
-            <td>{{per.name}}</td>
-            <td>{{per.enabled}}</td>
-            <td><button @click='delEntry(per.id)'>x</button></td>
+            <td>{{per.Id}}</td>
+            <td>{{per.Name}}</td>
+            <td>{{per.Enabled}}</td>
+            <td><button @click='delEntry(per.Id)'>x</button></td>
        </tr>   
        </table>    
       </div>     
@@ -77,11 +77,11 @@ methods: {
         console.log(error);
       }
     },
-    async delEntry(id) {
-      console.log("delete: " + id)
+    async delEntry(Id) {
+      console.log("delete: " + Id)
     
            await   axios.post("http://localhost:8081/api/delFirma", {
-                id: id
+                Id: Id
               }, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -96,6 +96,11 @@ methods: {
         alert("Kein Name eingetragen")        
       }else {
 
+        if (this.newFirma.Enabled == true ){
+          this.newFirma.Enabled = "1"
+        } else {
+          this.newFirma.Enabled = "0"
+        }
  await   axios.post("http://localhost:8081/api/createFirma", {
                 newFirma: this.newFirma},
                {
