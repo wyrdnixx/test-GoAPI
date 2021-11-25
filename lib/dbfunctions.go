@@ -49,17 +49,17 @@ func Initdb() {
 	defer db.Close()
 }
 
-func InsertFirmen(fi models.Firma) {
+func InsertFirmen(fi models.NewCompany) {
 	db, err := sql.Open("mysql", DBUser+":"+DBPassword+"@tcp("+DBHost+":"+DBPort+")/"+DBName)
 
 	fmt.Printf("insertFirma got Name %s\n", fi.Name)
-	fmt.Printf("insertFirma got Enabled %s\n", fi.Enabled)
+	fmt.Printf("insertFirma got Enabled %s\n", strconv.Itoa(fi.Enabled))
 	fmt.Println(fi.Name)
 	res2, err := db.Query(`
 	insert into Firmen (			
 		Name,
 		Enabled) values (
-			"` + fi.Name + `" , " ` + string(fi.Enabled) + `"
+			"` + fi.Name + `" , " ` + strconv.Itoa(fi.Enabled) + `"
 		);
 	`)
 
@@ -68,7 +68,7 @@ func InsertFirmen(fi models.Firma) {
 }
 
 func GetFirmen() (models.Firmen, error) {
-	fmt.Printf("GetFirmen:\n")
+	//fmt.Printf("GetFirmen:\n")
 
 	firmen := models.Firmen{}
 

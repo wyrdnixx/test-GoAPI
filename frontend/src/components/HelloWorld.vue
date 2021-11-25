@@ -5,13 +5,37 @@
       MY test app<br>
       
     </p>
+
+<!-- Toast Message banner  -->
+    <b-button @click="showAlert('Test-alarm')" variant="info" class="m-1">
+      Show alert with count-down timer
+    </b-button>
+    <b-alert
+      :show="dismissCountDown"
+      dismissible
+      variant="warning"
+      @dismissed="dismissCountDown=0"
+      @dismiss-count-down="countDownChanged"
+    >
+      <p> {{this.websiteAlertMessage}} {{ dismissCountDown }} </p>
+      <b-progress
+        variant="warning"
+        :max="dismissSecs"
+        :value="dismissCountDown"
+        height="4px"
+      ></b-progress>
+    </b-alert>
+
+<!-- Toast Message banner  -->
+
     <h3>Test here:</h3>
 
     <div id="newFirma"> 
       <input type="text" v-model="newFirma.Name" placeholder="FirmaName"> 
-      <input type="checkbox" v-model="newFirma.Enabled" placeholder="Enabled" name="chkEnabled">  <label for="chkEnabled">Aktiv</label>
+      <input type="checkbox" v-model="newFirmaActive" placeholder="Enabled" name="chkEnabled" value="test">  <label for="chkEnabled">Aktiv</label>
+      
       <br>
-      <button class="button" @click="createFirma">Eintragen</button>
+      <button class="button" @click="createFirma">Eintragen</button> 
 
     </div>
 
@@ -62,12 +86,18 @@ export default {
       newFirma: {
         Name:"",
         Enabled:""
-      }
+      },
+      newFirmaActive:false,
+        dismissSecs: 4,
+        dismissCountDown: 0,
+        showDismissibleAlert: false,
+        websiteAlertMessage: ""
     }
   },
 methods: {
   clearData() {
     this.info = "empty-string"
+    
   },
   async getData() {
       try {
@@ -93,16 +123,15 @@ methods: {
     async createFirma(){
       console.log("submiting new Firma", this.newFirma)
       if (this.newFirma.Name == "") {
-        alert("Kein Name eingetragen")        
+        //alert("Kein Name eingetragen")        
+        this.showAlert('Kein Name eingetragen')
       }else {
-
-        if (this.newFirma.Enabled == true ){
-          this.newFirma.Enabled = "1"
-        } else {
-          this.newFirma.Enabled = "0"
-        }
- await   axios.post("http://localhost:8081/api/createFirma", {
-                newFirma: this.newFirma},
+        if (this.newFirmaActive ) {
+          this.newFirma.Enabled = '1'
+        } else  {this.newFirma.Enabled = '0'}
+        await   axios.post("http://localhost:8081/api/createFirma", {
+                NewFirma:this.newFirma
+                },
                {
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,6 +142,13 @@ methods: {
 
       }
     
+    },
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
+    },
+    showAlert(msg) {
+      this.websiteAlertMessage = msg
+      this.dismissCountDown = this.dismissSecs
     }
 }
 }

@@ -27,8 +27,12 @@ type Firmen struct {
 	Firmen []Firma `json:"Firmen"`
 }
 
+type NewCompanyMessage struct {
+	NewCompany NewCompany `json:"NewFirma"`
+}
 type NewCompany struct {
-	Name string `json:"name"`
+	Name    string `json:"Name"`
+	Enabled int    `json:"Enabled,string"`
 }
 
 ////////// Abteilungen

@@ -8,6 +8,7 @@ import (
 	"onboarding/lib"
 	_ "onboarding/lib"
 	"onboarding/models"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -37,20 +38,22 @@ func EnableCors(w *http.ResponseWriter) {
 func createFirma(w http.ResponseWriter, r *http.Request) {
 	EnableCors(&w)
 	reqBody, err := ioutil.ReadAll(r.Body)
-	fmt.Printf("createFirma got: %s\n", reqBody)
+	fmt.Printf("createFirma got: %s\n", string(reqBody))
 	if err != nil {
 		fmt.Printf("createFirma error: %s \n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
-		m := models.Firma{}
+		m := models.NewCompanyMessage{}
 		err := json.Unmarshal(reqBody, &m)
 		if err != nil {
-			fmt.Printf("createFirma Error on json.unmarshal: %s", err)
+			fmt.Printf("createFirma Error on json.unmarshal: %s\n", err)
 			//http.Error(w, err.Error(), http.StatusInternalServerError)
 
 		} else {
-			//fmt.Printf("del-ID: %d\n", m.Id)
-			lib.InsertFirmen(m)
+			fmt.Printf("Vor insert: %s\n", m.NewCompany.Name)
+			fmt.Printf("Vor insert: %s\n", strconv.Itoa(m.NewCompany.Enabled))
+			//fmt.Printf("Vor insert: %s\n", m.Enabled)
+			lib.InsertFirmen(m.NewCompany)
 		}
 
 	}
