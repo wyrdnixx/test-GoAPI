@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "vue-client-only": "^2.1.0"
+  }
+}
