@@ -30,18 +30,21 @@
 
     <h3>Test here:</h3>
 
-    <div id="newFirma"> 
-      <input type="text" v-model="newFirma.Name" placeholder="FirmaName"> 
-      <input type="checkbox" v-model="newFirmaActive" placeholder="Enabled" name="chkEnabled" value="test">  <label for="chkEnabled">Aktiv</label>
+
+    <div  class="form-group formdiv" id="newFirma"> 
+      
+      <input type="text"  class="form-control" v-model="newFirma.Name" placeholder="FirmaName"> 
+      <input type="checkbox"  class="form-control" v-model="newFirmaActive" placeholder="Enabled" name="chkEnabled" value="test">  <label for="chkEnabled">Aktiv</label>
       
       <br>
-      <button class="button" @click="createFirma">Eintragen</button> 
+      <button class="btn btn-info" v-on:click="createFirma()">Eintragen</button> 
 
     </div>
 
+
     <div id="example-1">
-      <button v-on:click="getData()">Refresh</button>
-      <button v-on:click="clearData()">clear</button>
+      <button class="btn btn-info" v-on:click="getData()">Refresh</button>
+      <button class="btn btn-info" v-on:click="clearData()">clear</button>
       <p>Info field: </p> <br> 
       <!-- <h2>Debug {{ this.info }} </h2>       --> 
       
@@ -50,13 +53,20 @@
          
       </h1>
       
-      <div id="Results">
-        <table>
+      <div id="Results" class="formdiv">
+        <table class="table table-dark">
+          <thead>
+            <td>ID</td>
+            <td>Name</td>
+            <td>Enabled</td>
+            <td>Delete entry</td>
+            
+          </thead>
        <tr  v-for="per in this.info.Firmen" v-bind:key="per.Id">
             <td>{{per.Id}}</td>
             <td>{{per.Name}}</td>
             <td>{{per.Enabled}}</td>
-            <td><button @click='delEntry(per.Id)'>x</button></td>
+            <td><button class="btn btn-primary" @click='delEntry(per.Id)'>x</button></td>
        </tr>   
        </table>    
       </div>     
@@ -94,14 +104,19 @@ export default {
         websiteAlertMessage: ""
     }
   },
+    created() {
+            this.getData()    
+
+  },
 methods: {
+
   clearData() {
     this.info = "empty-string"
     
   },
   async getData() {
       try {
-        let response = await fetch("http://localhost:8081/api/health");
+        let response = await fetch("http://localhost:8081/api/getFirmen");
         this.info = await response.json();
       } catch (error) {
         console.log(error);
@@ -116,7 +131,7 @@ methods: {
                 headers: {
                     'Content-Type': 'application/json',
                 }
-              }).catch((error)=> alert(("Server returned an Error:\n" + error.response.data)));  
+              }).catch((error)=> this.showAlert("Server returned an Error:\n" + error.response.data));  
     
             this.getData()    
     },
@@ -170,6 +185,7 @@ li {
 a {
   color: #42b983;
 }
+
 
 
 </style>

@@ -8,7 +8,6 @@ import (
 	"onboarding/lib"
 	_ "onboarding/lib"
 	"onboarding/models"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -50,9 +49,9 @@ func createFirma(w http.ResponseWriter, r *http.Request) {
 			//http.Error(w, err.Error(), http.StatusInternalServerError)
 
 		} else {
-			fmt.Printf("Vor insert: %s\n", m.NewCompany.Name)
-			fmt.Printf("Vor insert: %s\n", strconv.Itoa(m.NewCompany.Enabled))
-			//fmt.Printf("Vor insert: %s\n", m.Enabled)
+			//fmt.Printf("Vor insert: %s\n", m.NewCompany.Name)
+			//fmt.Printf("Vor insert: %s\n", strconv.Itoa(m.NewCompany.Enabled))
+
 			lib.InsertFirmen(m.NewCompany)
 		}
 
@@ -100,15 +99,15 @@ func main() {
 	//testReadDB()
 
 	// test - übernahme von rückgabewert von function
-	err, test := lib.GetFirmen()
-	fmt.Printf("got back: %s\n", test, err)
+	//err, test := lib.GetFirmen()
+	//fmt.Printf("got back: %s\n", test, err)
 	//-------------
 
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/delFirma", delFirma)
 	router.HandleFunc("/api/createFirma", createFirma)
-	router.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/api/getFirmen", func(w http.ResponseWriter, r *http.Request) {
 
 		//Allow CORS here By * or specific origin
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -126,7 +125,7 @@ func main() {
 			txt.ErrorText = "empty sql response"
 			json.NewEncoder(w).Encode(txt)
 		} else {
-			fmt.Printf("api/health returning to client: %s", res)
+			fmt.Printf("api/health returning to client: %s\n", res.Firmen)
 			json.NewEncoder(w).Encode(res)
 
 		}

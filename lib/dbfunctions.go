@@ -42,7 +42,7 @@ func Initdb() {
 			fmt.Println("an error occourred: %S\n", err.Error())
 
 		} else {
-			fmt.Printf("create table: %s\n", res.Err())
+			fmt.Printf("Init-DB completed: %s\n", res.Err())
 		}
 
 	}
@@ -87,7 +87,7 @@ func GetFirmen() (models.Firmen, error) {
 		for rows.Next() {
 			itm := models.Firma{}
 			err = rows.Scan(&itm.Id, &itm.Name, &itm.Enabled)
-			fmt.Printf("\nGetFirmen -- Got: %s", itm)
+			//fmt.Printf("\nGetFirmen -- Got: %s", itm)
 			firmen.Firmen = append(firmen.Firmen, itm)
 
 		}

@@ -32,10 +32,19 @@ export default {
   margin-top: 60px;
 }
 
-table {
+table, tr, td {
   margin-left: auto;
   margin-right: auto;
-   border: 1px solid black;
-      text-align: left;
+    
+  border: 1px solid black;
+  text-align: left;  
    }
+
+
+.formdiv {
+ padding-top: 8px; 
+padding-right: 90px; 
+padding-bottom: 8px; 
+padding-left: 90px; 
+}
 </style>
