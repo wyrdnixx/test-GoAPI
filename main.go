@@ -8,6 +8,8 @@ import (
 	"onboarding/lib"
 	_ "onboarding/lib"
 	"onboarding/models"
+	"onboarding/tcpserver"
+	_ "onboarding/tcpserver"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -88,21 +90,17 @@ func delFirma(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	//testFirma := test()
-	//testFirmen := models.Firmen{}
+	// HL7 Listener
+	hl7server := tcpserver.NewServer(&tcpserver.Config{
+		Host: "0.0.0.0",
+		Port: "666",
+	})
+	hl7server.Run()
 
-	//testFirmen.Firmen = append(testFirmen.Firmen, testFirma)
-	//testFirmen.Firmen = append(testFirmen.Firmen, testFirma)
-
+	//Database
 	lib.Initdb()
-	//testInsertDB(&testFirma)
-	//testReadDB()
 
-	// test - übernahme von rückgabewert von function
-	//err, test := lib.GetFirmen()
-	//fmt.Printf("got back: %s\n", test, err)
-	//-------------
-
+	// WEbAPI Router
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/delFirma", delFirma)
