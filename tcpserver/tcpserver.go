@@ -3,9 +3,11 @@ package tcpserver
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"regexp"
+	"strings"
 )
 
 // Server ...
@@ -59,22 +61,78 @@ func (server *Server) Run() {
 func (client *Client) handleRequest() {
 	reader := bufio.NewReader(client.conn)
 	fmt.Println("Got connection: ", client.conn.RemoteAddr())
+	var m []string
+
 	for {
-		message, err := reader.ReadString('\n')
-		//message, err := reader.ReadString('|')
-		if err != nil {
+		//message, err := reader.ReadString('\r')
+
+		//var hexStartMessage byte = 0x0B
+
+		var hexFinishMessage1 byte = 0x1C
+		//var hexFinishMessage2 byte = 0x0D
+
+		//var hexFinishSegment byte = 0x0D
+
+		message, err := reader.ReadString(hexFinishMessage1)
+		fmt.Printf("Message incoming: %s\n", message)
+		//fmt.Println("Byte incoming: ", []byte(message)
+		parseHL7(message)
+		switch err {
+		case nil:
+			m = append(m, message)
+		case io.EOF:
+			log.Println("server closed the connection")
+			fmt.Printf("Message after EOF : %s\n", m)
+			client.conn.Write([]byte("Message received.\n"))
+			client.conn.Close()
+			return
+		default:
+			log.Printf("server error: %v\n", err)
 			client.conn.Close()
 			return
 		}
-		fmt.Printf("Message incoming: %s\n", string(message))
-		parseHL7(message)
-		client.conn.Write([]byte("Message received.\n"))
+
+		/*
+			if err != nil {
+				client.conn.Close()
+				if err == io.EOF {
+					fmt.Println("End of message reached")
+
+				}
+				return
+			}
+		*/
+
+		// parseHL7(message)
+
+		/*
+			/// verschieben
+			MSHmatched, _ := regexp.MatchString("^MSH", message)
+
+			if MSHmatched {
+				fmt.Println("MSH found: ", MSHmatched) // true or false
+			} else {
+				m = append(m, message)
+			}
+
+			client.conn.Write([]byte("Message received.\n"))
+		*/
 	}
+
 }
 
 func parseHL7(message string) {
 	fmt.Println("HL7 parser starting...")
-	//s := strings.Split(message, "|")
-	s := regexp.MustCompile(`MSH|PID|^`)
-	fmt.Printf("%q\n", s.Split(message, -1))
+	s := strings.Split(message, "\r")
+	fmt.Printf("Full messge : %q\n", s)
+
+	// var hexVerticalTabbyte = 00B
+	//for , a := range s {  -> i = index
+	for _, a := range s {
+		MSHmatched, _ := regexp.MatchString("^MSH", a)
+		if MSHmatched {
+			fmt.Println("MSHHeader found")
+
+		}
+	}
 }
