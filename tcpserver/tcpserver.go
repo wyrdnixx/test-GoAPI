@@ -19,6 +19,7 @@ type Client struct {
 	conn net.Conn
 }
 
+
 // Config ...
 type Config struct {
 	Host string
@@ -70,6 +71,8 @@ func (client *Client) handleRequest() {
 		//var hexFinishMessage2 byte = 0x0D
 
 		//var hexFinishSegment byte = 0x0D
+
+
 
 		message, err := reader.ReadString(hexFinishMessage1)
 		fmt.Printf("Message incoming: %s\n", message)

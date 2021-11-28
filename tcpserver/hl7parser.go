@@ -2,7 +2,6 @@ package tcpserver
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -12,24 +11,43 @@ type msh struct {
 
 func parseHL7(message string) {
 	fmt.Println("HL7 parser starting...")
+	message = removeFirstVTab(message)
 	s := strings.Split(message, "\r")
 	fmt.Printf("Full messge : %q\n", s)
 
 	//var hexVerticalTabbyte byte = 0xB
 	//for , a := range s {  -> i = index
-	var header msh
-	for _, a := range s {
-		MSHmatched, _ := regexp.MatchString("MSH|", a)
-		if MSHmatched {
-			fmt.Println("MSHHeader found")
+	var fields msh
 
-			s1 := strings.Split(a, "|")
-			for _, x := range s1 {
-				header.fields = append(header.fields, x)
-			}
-		}
+	for _, a := range s {
+		//mshfound, err := regexp.MatchString("MSH|", a)
+		//s1 := strings.Split(a, "|")
+		//for _, x := range s1 {
+		//	header.fields = append(header.fields, x)
+		//}
+
+		fields.fields = append(fields.fields, a)
+		fmt.Println("-> ", a)
+
 	}
 
-	fmt.Println("Header-Fields: ", header.fields)
+	//fmt.Println("Header-Fields: ", header.fields[8])
+
+}
+
+func removeFirstVTab(s string) string {
+	var hexVerticalTabbyte byte = 0xB
+
+	b := []byte(s)
+	var res []byte
+
+	for i, v := range b {
+		if v == hexVerticalTabbyte {
+			fmt.Println("removing vTAB on pos:", i)
+		} else {
+			res = append(res, v)
+		}
+	}
+	return string(res)
 
 }
