@@ -6,8 +6,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"regexp"
-	"strings"
 )
 
 // Server ...
@@ -97,7 +95,6 @@ func (client *Client) handleRequest() {
 				client.conn.Close()
 				if err == io.EOF {
 					fmt.Println("End of message reached")
-
 				}
 				return
 			}
@@ -108,31 +105,13 @@ func (client *Client) handleRequest() {
 		/*
 			/// verschieben
 			MSHmatched, _ := regexp.MatchString("^MSH", message)
-
 			if MSHmatched {
 				fmt.Println("MSH found: ", MSHmatched) // true or false
 			} else {
 				m = append(m, message)
 			}
-
 			client.conn.Write([]byte("Message received.\n"))
 		*/
 	}
 
-}
-
-func parseHL7(message string) {
-	fmt.Println("HL7 parser starting...")
-	s := strings.Split(message, "\r")
-	fmt.Printf("Full messge : %q\n", s)
-
-	// var hexVerticalTabbyte = 00B
-	//for , a := range s {  -> i = index
-	for _, a := range s {
-		MSHmatched, _ := regexp.MatchString("^MSH", a)
-		if MSHmatched {
-			fmt.Println("MSHHeader found")
-
-		}
-	}
 }
