@@ -123,7 +123,7 @@ func main() {
 			txt.ErrorText = "empty sql response"
 			json.NewEncoder(w).Encode(txt)
 		} else {
-			fmt.Printf("api/health returning to client: %s\n", res.Firmen)
+			//fmt.Printf("api/health returning to client: %s\n", res.Firmen)
 			json.NewEncoder(w).Encode(res)
 
 		}

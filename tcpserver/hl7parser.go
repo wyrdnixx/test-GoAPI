@@ -1,14 +1,14 @@
 package tcpserver
 
 import (
+	"errors"
 	"fmt"
-	"onboarding/lib"
 	"onboarding/models"
 	"regexp"
 	"strings"
 )
 
-func parseHL7(message string) {
+func ParseHL7(message string) error {
 	fmt.Println("HL7 parser starting...")
 	message = removeFirstVTab(message)
 	s := strings.Split(message, "\r")
@@ -17,7 +17,8 @@ func parseHL7(message string) {
 	//var hexVerticalTabbyte byte = 0xB
 	//for , a := range s {  -> i = index
 
-	msg := models.HL7message{}
+	//msg := models.HL7message{}
+	msg := models.HL7Message{}
 
 	for _, a := range s {
 		//mshfound, err := regexp.MatchString("MSH|", a)
@@ -30,6 +31,7 @@ func parseHL7(message string) {
 		mshfound, err := regexp.MatchString(`^MSH\|`, a)
 		if err != nil {
 			fmt.Println("Not an MSH segment")
+
 		}
 		pidfound, err := regexp.MatchString(`^PID\|`, a)
 		if err != nil {
@@ -38,11 +40,23 @@ func parseHL7(message string) {
 
 		if mshfound {
 			//fmt.Println("MSH found")
-			msg.Segments = append(msg.Segments, a)
+			//msg.Segments = append(msg.Segments, a)
+			elements := strings.Split(a, "|")
+			//fmt.Println("Name: ", string(elements[5]))
+			msg.MSH.Type = strings.Split(elements[8], "^")[0]
+			msg.MSH.Event = strings.Split(elements[8], "^")[1]
 
+			//fmt.Println("MSH: ", msg.MSH)
 		}
 
 		if pidfound {
+
+			elements := strings.Split(a, "|")
+			msg.PID.PAT = elements[4]
+			msg.PID. = strings.Split(elements[5], "^")[0]
+
+
+			/* Tests
 			//fmt.Println("PID found")
 			msg.Segments = append(msg.Segments, a)
 			elements := strings.Split(a, "|")
@@ -50,22 +64,21 @@ func parseHL7(message string) {
 			msg.PIDPER = elements[4]
 			msg.PIDGIVENNAME = strings.Split(elements[5], "^")[0]
 			msg.PIDSURNAME = strings.Split(elements[5], "^")[1]
+			*/
 
 		}
 	}
 
 	//fmt.Println("Header-Fields: ", header.fields[8])
 
-	fmt.Println("Message-Object after parser: ", msg)
-	fmt.Println("Message-Object given: ", msg.PIDGIVENNAME)
-	fmt.Println("Message-Object sure: ", msg.PIDSURNAME)
-	fmt.Println("Message-Object per: ", msg.PIDPER)
+	//lib.InsertFirmen(f)
 
-	// test - add as company
-	f := models.NewCompany{}
-	f.Name = msg.PIDGIVENNAME
-	fmt.Println("newfirma name ", f.Name)
-	lib.InsertFirmen(f)
+	if len(msg.MSH.Type) > 0 {
+		return nil
+		//TEST : return errors.New("error: no MSH Type")
+	} else {
+		return errors.New("error: no MSH Type")
+	}
 
 }
 
