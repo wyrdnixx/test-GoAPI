@@ -95,7 +95,7 @@ func main() {
 		Host: "0.0.0.0",
 		Port: "666",
 	})
-	hl7server.Run()
+	go hl7server.Run()
 
 	//Database
 	lib.Initdb()
