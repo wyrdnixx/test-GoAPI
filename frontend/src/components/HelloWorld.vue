@@ -45,7 +45,8 @@
     <div id="example-1">
       <button class="btn btn-info" v-on:click="getData()">Refresh</button>
       <button class="btn btn-info" v-on:click="clearData()">clear</button>
-      <p>Info field: </p> <br> 
+      <button class="btn btn-info" v-on:click="setCookie()">setCookie</button>
+      <p>Info field: {{ this.info }} </p> <br> 
       <!-- <h2>Debug {{ this.info }} </h2>       --> 
       
       <h1 class="badge badge-warning" v-if="this.info.ErrorText != null">
@@ -83,8 +84,12 @@
 
 import axios from 'axios';
 
+
+const apiURL = window.location.protocol + "//"+ window.location.hostname +":8081/api"
+
 export default {
   name: 'HelloWorld',
+  
   props: {
     msg: String
   },
@@ -106,6 +111,9 @@ export default {
   },
     created() {
             this.getData()    
+            this.$cookies.set('testcookie', 'this value')
+            //$cookies.set('testcookie', 'this value')
+
 
   },
 methods: {
@@ -113,19 +121,43 @@ methods: {
   clearData() {
     this.info = "empty-string"
     
+    
   },
+  setCookie() {
+    var user = { id:1, name:'Journal',session:'25j_7Sl6xDq2Kc3ym0fmrSSk2xV2XkUkX' };
+        
+    
+    
+    
+    try {
+      var user2 = this.$cookies.get('CB')
+      this.info = user2.name + " - " + user2.session
+      console.log("Cookie-B: " +JSON.stringify(user2))
+       console.log("Cookie-B-config: " + JSON.stringify(this.$cookies.get('CB')))
+    }catch {
+      console.log("Cookie CB not existing... setting it...")
+      this.$cookies.set('CB', user, '1Y' );
+    }
+    
+  },
+      
+
   async getData() {
       try {
-        let response = await fetch("http://localhost:8081/api/getFirmen");
-        this.info = await response.json();
+        
+        let response = await axios.get(apiURL  + "/getFirmen");
+//        let response = await axios.get("http://localhost:8081/api/getFirmen");
+        this.info = response.data;
       } catch (error) {
         console.log(error);
+        this.showAlert("Server returned an Error:\n" + error); 
       }
     },
     async delEntry(Id) {
       console.log("delete: " + Id)
     
-           await   axios.post("http://localhost:8081/api/delFirma", {
+           await   axios.post(apiURL + "/delFirma", {
+           //await   axios.post("http://localhost:8081/api/delFirma", {
                 Id: Id
               }, {
                 headers: {
@@ -144,7 +176,7 @@ methods: {
         if (this.newFirmaActive ) {
           this.newFirma.Enabled = '1'
         } else  {this.newFirma.Enabled = '0'}
-        await   axios.post("http://localhost:8081/api/createFirma", {
+        await   axios.post(apiURL + "/createFirma", {
                 NewFirma:this.newFirma
                 },
                {

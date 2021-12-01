@@ -17,9 +17,11 @@ GT1|1|70900021|Sonne^Marie||Untere Hauptstra�e 34^^Walsheim^^76833^D|||1945101
 // for a valid return value.
 func TestHelloName(t *testing.T) {
 
-	err := tcpserver.ParseHL7(testmsg)
+	msg, err := tcpserver.ParseHL7(testmsg)
 	if err != nil {
 		t.Fatalf(`ParseHL7 : want err= "nil", got: %v`, err.Error())
+	} else {
+		t.Logf("MSG OK: %s", msg.PID)
 	}
 	/*
 		name := "Gladys"

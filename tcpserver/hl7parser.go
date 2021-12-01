@@ -3,12 +3,13 @@ package tcpserver
 import (
 	"errors"
 	"fmt"
+	"onboarding/lib"
 	"onboarding/models"
 	"regexp"
 	"strings"
 )
 
-func ParseHL7(message string) error {
+func ParseHL7(message string) (models.HL7Message, error) {
 	fmt.Println("HL7 parser starting...")
 	message = removeFirstVTab(message)
 	s := strings.Split(message, "\r")
@@ -53,8 +54,8 @@ func ParseHL7(message string) error {
 
 			elements := strings.Split(a, "|")
 			msg.PID.PAT = elements[4]
-			msg.PID. = strings.Split(elements[5], "^")[0]
-
+			msg.PID.SURNAME = strings.Split(elements[5], "^")[0]
+			msg.PID.GIVENNAME = strings.Split(elements[5], "^")[1]
 
 			/* Tests
 			//fmt.Println("PID found")
@@ -74,10 +75,13 @@ func ParseHL7(message string) error {
 	//lib.InsertFirmen(f)
 
 	if len(msg.MSH.Type) > 0 {
-		return nil
+		f := models.NewCompany{}
+		f.Name = msg.PID.GIVENNAME + msg.PID.SURNAME
+		lib.InsertFirmen(f)
+		return msg, nil
 		//TEST : return errors.New("error: no MSH Type")
 	} else {
-		return errors.New("error: no MSH Type")
+		return msg, errors.New("error: no MSH Type")
 	}
 
 }
