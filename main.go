@@ -36,37 +36,70 @@ func EnableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Headers", allowedHeaders)
 }
 
+type Result struct {
+	Msg   string `json:"msg"`
+	Value bool   `json:"value"`
+}
+type Uuid struct {
+	Id string
+}
+
 func checkUserCookie(w http.ResponseWriter, r *http.Request) {
 	EnableCors(&w)
+	w.Header().Set("Content-Type", "application/json")
 
-	var res struct {
-		msg   string
-		value bool
-	}
+	res := Result{}
+	var checkUUID Uuid
 
 	reqBody, err := ioutil.ReadAll(r.Body)
 	fmt.Printf("checkUserCookie got: %s\n", string(reqBody))
 	if err != nil {
 		fmt.Printf("error checking cookie: ", err.Error())
-		res.msg = "cookieValid"
-		res.value = false
-		json.NewEncoder(w).Encode(res)
-	} else {
-		fmt.Printf("checking cookie: %s\n", string(reqBody))
-
-		res.msg = "cookieValid"
-		res.value = true
-
-		response, _ := json.Marshal(res)
-		fmt.Println("response: ", response)
-
-		//time.Sleep(5 * time.Second)
-		fmt.Println("sending answer")
-		w.Header().Set("Contend-Type", "application/json")
-		w.Write(response)
+		res.Msg = "cookieValid"
+		res.Value = false
 
 		//json.NewEncoder(w).Encode(res)
+	} else {
+		//err := json.NewDecoder(r.Body).Decode(&checkUUID)
+		err := json.Unmarshal(reqBody, &checkUUID)
+		if err != nil {
+			fmt.Println("Json decoder checkUUID error: ", err.Error())
+			res.Msg = "cookieValid"
+			res.Value = false
 
+		} else {
+			fmt.Println("checkUserUUID: ", checkUUID.Id)
+			if checkUserUUID(checkUUID.Id) {
+				res.Msg = "cookieValid"
+				res.Value = true
+			} else {
+				res.Msg = "cookieValid"
+				res.Value = true
+			}
+
+		}
+
+	}
+
+	response, err := json.Marshal(res)
+	if err != nil {
+		fmt.Println("checkUserCookie : Error convert response to json: ", err.Error())
+	}
+	//fmt.Println("response: ", response)
+
+	//time.Sleep(5 * time.Second)
+	fmt.Println("sending answer: ", string(response))
+	// w.WriteHeader(http.StatusAccepted)
+	w.Write(response)
+
+	//json.NewEncoder(w).Encode(res)
+}
+
+func checkUserUUID(c string) bool {
+	if c == "de070071-0b1a-45a5-84d0-cc89d631a960" {
+		return true
+	} else {
+		return false
 	}
 }
 

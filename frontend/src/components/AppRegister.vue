@@ -66,17 +66,21 @@ export default{
                }
                
         },
-        async checkCookiewithserver() {
-              let testResult =  await   axios.post(this.$parent.apiURL + "/checkUserCookie", {
+         checkCookiewithserver() {
+
+             // test valid cookie : de070071-0b1a-45a5-84d0-cc89d631a960
+             this.UserCookie.id = "Xde070071-0b1a-45a5-84d0-cc89d631a960"
+               axios.post(this.$parent.apiURL + "/checkUserCookie", {
            
                 Id: this.UserCookie.id
               }, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
-              })              
+              })
+              .then(response=>  this.$parent.showAlert("cookie test result:\n" +  JSON.stringify(response.data))   )              
               .catch((error)=> this.$parent.showAlert("Server returned an Error:\n" + error.response.data));  
-             this.$parent.showAlert("cookie test result:\n" +  JSON.stringify(testResult))   
+             
         }
     
     }
