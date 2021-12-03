@@ -15,6 +15,7 @@
 <script>
 
   import { uuid } from 'vue-uuid'; 
+import axios from 'axios';
 
 export default{
     name: "AppRegister",
@@ -49,15 +50,33 @@ export default{
 
         },
         testCookie() {
-            
+             
+             // test the Alert
+             //this.$parent.showAlert("test-Alert\n" )
+
+
                 this.UserCookie = this.$cookies.get('MyvueAppCookie')
                
                if(this.UserCookie == null) {
                 console.log("cookie not found")   
                } else {
                 console.log("cookie found: " + this.UserCookie.id)
+                console.log("testing against server...")
+                this.checkCookiewithserver()
                }
                
+        },
+        async checkCookiewithserver() {
+              let testResult =  await   axios.post(this.$parent.apiURL + "/checkUserCookie", {
+           
+                Id: this.UserCookie.id
+              }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+              })              
+              .catch((error)=> this.$parent.showAlert("Server returned an Error:\n" + error.response.data));  
+             this.$parent.showAlert("cookie test result:\n" +  JSON.stringify(testResult))   
         }
     
     }

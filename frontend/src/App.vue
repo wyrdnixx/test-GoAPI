@@ -3,6 +3,28 @@
 <template>
   <div id="app" >
     <img alt="Vue logo" src="./assets/logo.png">
+
+    <!-- Toast Message banner  -->
+
+    <b-alert
+      :show="AlertDismissCountDown"
+      dismissible
+      variant="warning"
+      @dismissed="AlertDismissCountDown=0"
+      @dismiss-count-down="countDownChanged"
+    >
+      <p> {{this.AlertWebsiteAlertMessage}} {{ AlertDismissCountDown }} </p>
+      <b-progress
+        variant="warning"
+        :max="AlertDismissSecs"
+        :value="AlertDismissCountDown"
+        height="4px"
+      ></b-progress>
+    </b-alert>
+
+<!-- Toast Message banner  -->
+
+
     <div v-if="authenicated">
       <HelloWorld  msg="Welcome asdf Your Vue.js App"/>
     </div>
@@ -16,6 +38,7 @@
 import HelloWorld from './components/HelloWorld.vue'
 import AppRegister from './components/AppRegister.vue'
 
+ 
 
 
 
@@ -27,9 +50,23 @@ export default {
   },
   data() {
     return {
-      authenicated: false
+      authenicated: false,
+      apiURL :  window.location.protocol + "//"+ window.location.hostname +":8081/api",
+      AlertDismissSecs: 4,
+      AlertDismissCountDown: 0,
+      AlertShowDismissibleAlert: false,
+      AlertWebsiteAlertMessage: ""
     }
     
+  },
+  methods: {
+        countDownChanged(AlertDismissCountDown) {
+      this.AlertDismissCountDown = AlertDismissCountDown
+    },
+    showAlert(msg) {
+      this.AlertWebsiteAlertMessage = msg
+      this.AlertDismissCountDown = this.AlertDismissSecs
+    }
   }
 }
 </script>

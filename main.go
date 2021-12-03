@@ -36,6 +36,40 @@ func EnableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Headers", allowedHeaders)
 }
 
+func checkUserCookie(w http.ResponseWriter, r *http.Request) {
+	EnableCors(&w)
+
+	var res struct {
+		msg   string
+		value bool
+	}
+
+	reqBody, err := ioutil.ReadAll(r.Body)
+	fmt.Printf("checkUserCookie got: %s\n", string(reqBody))
+	if err != nil {
+		fmt.Printf("error checking cookie: ", err.Error())
+		res.msg = "cookieValid"
+		res.value = false
+		json.NewEncoder(w).Encode(res)
+	} else {
+		fmt.Printf("checking cookie: %s\n", string(reqBody))
+
+		res.msg = "cookieValid"
+		res.value = true
+
+		response, _ := json.Marshal(res)
+		fmt.Println("response: ", response)
+
+		//time.Sleep(5 * time.Second)
+		fmt.Println("sending answer")
+		w.Header().Set("Contend-Type", "application/json")
+		w.Write(response)
+
+		//json.NewEncoder(w).Encode(res)
+
+	}
+}
+
 func createFirma(w http.ResponseWriter, r *http.Request) {
 	EnableCors(&w)
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -105,6 +139,7 @@ func main() {
 
 	router.HandleFunc("/api/delFirma", delFirma)
 	router.HandleFunc("/api/createFirma", createFirma)
+	router.HandleFunc("/api/checkUserCookie", checkUserCookie)
 	router.HandleFunc("/api/getFirmen", func(w http.ResponseWriter, r *http.Request) {
 
 		//Allow CORS here By * or specific origin
