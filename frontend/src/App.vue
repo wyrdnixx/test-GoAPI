@@ -3,13 +3,18 @@
 <template>
   <div id="app" >
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome asdf Your Vue.js App"/>
+    <div v-if="authenicated">
+      <HelloWorld  msg="Welcome asdf Your Vue.js App"/>
+    </div>
+    <div v-else>
+      <AppRegister/>
+    </div>
   </div>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
-
+import AppRegister from './components/AppRegister.vue'
 
 
 
@@ -17,7 +22,14 @@ import HelloWorld from './components/HelloWorld.vue'
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HelloWorld,
+    AppRegister
+  },
+  data() {
+    return {
+      authenicated: false
+    }
+    
   }
 }
 </script>
