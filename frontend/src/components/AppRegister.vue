@@ -66,11 +66,13 @@ export default{
                }
                
         },
-         checkCookiewithserver() {
+        checkCookiewithserver() {
 
              // test valid cookie : de070071-0b1a-45a5-84d0-cc89d631a960
              this.UserCookie.id = "Xde070071-0b1a-45a5-84d0-cc89d631a960"
-               axios.post(this.$parent.apiURL + "/checkUserCookie", {
+
+             
+             axios.post(this.$parent.apiURL + "/checkUserCookie", {
            
                 Id: this.UserCookie.id
               }, {
@@ -78,9 +80,15 @@ export default{
                     'Content-Type': 'application/json',
                 }
               })
-              .then(response=>  this.$parent.showAlert("cookie test result:\n" +  JSON.stringify(response.data))   )              
-              .catch((error)=> this.$parent.showAlert("Server returned an Error:\n" + error.response.data));  
-             
+              .then(response=>  
+                this.$parent.showAlert("cookie test result:\n" +  JSON.stringify(response.data)))
+              //.catch((error)=> this.$parent.showAlert("Server returned an Error:\n" + error.response.data));    
+              .catch((error)=> this.logError("Error checking cookie against server... "+ error));    
+           
+        },
+        logError(text){
+            console.log("logError: ", text)
+            this.$parent.showAlert("ERROR: "+ text)
         }
     
     }
