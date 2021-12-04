@@ -1,6 +1,7 @@
 package main
 
 import (
+	"onboarding/lib"
 	"onboarding/tcpserver"
 	"testing"
 )
@@ -31,6 +32,37 @@ func TestHelloName(t *testing.T) {
 			t.Fatalf(`Hello("Gladys") = %q, %v, want match for %#q, nil`, msg, err, want)
 		}
 	*/
+}
+
+func TestCookieID(t *testing.T) {
+
+	// insert into cookieIds (Id) values ("de070071-0b1a-45a5-84d0-cc89d631a960");
+
+	goodID := "de070071-0b1a-45a5-84d0-cc89d631a960"
+	badID := "FALSE-COOKIE-45a5-84d0-cc89d631a960"
+
+	resGood, err := lib.CheckCookie(goodID)
+	if err != nil {
+		t.Fatalf(`TestCookieId - Error: %v`, err.Error())
+	} else {
+		if resGood == true {
+			t.Log("TestCookieId - goodId Ok")
+		} else {
+			t.Fatalf("TestCookieId - goodId failed - didn't got $true")
+		}
+	}
+
+	resBad, err := lib.CheckCookie(badID)
+	if err != nil {
+		t.Fatalf("TestCookieId - Error: %v", err.Error())
+	} else {
+		if resBad == false {
+			t.Log("TestCookieId - BadID Ok")
+		} else {
+			t.Fatalf("TestCookieId - BadID failed - didn't got $false")
+		}
+	}
+
 }
 
 // TestHelloEmpty calls greetings.Hello with an empty string,
