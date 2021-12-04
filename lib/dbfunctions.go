@@ -99,6 +99,38 @@ func GetFirmen() (models.Firmen, error) {
 	return firmen, nil
 }
 
+func CheckCookie(id string) (bool, error) {
+
+	db, err := sql.Open("mysql", DBUser+":"+DBPassword+"@tcp("+DBHost+":"+DBPort+")/"+DBName)
+	type ResultId struct {
+		id string
+	}
+	var resultId ResultId
+
+	fmt.Println("Testing cookieId: ", id)
+	if err != nil {
+		fmt.Printf("ERROR: DB Connection: %S \n" + err.Error())
+		return false, err
+		//		log.Fatal(4, "ERROR: DB Connection: "+err.Error())
+
+	} else {
+		err := db.QueryRow("select * from cookieIds where Id = \"" + id + "\";").Scan(&resultId.id)
+		if err != nil && err != sql.ErrNoRows {
+			fmt.Printf("ERROR: DB Select: %S \n" + err.Error())
+
+			return false, err
+		} else if err == sql.ErrNoRows {
+			fmt.Println("Requested cookieId not found")
+			return false, nil
+		} else {
+			fmt.Println("checkCookie SQL Result: ", resultId)
+
+			return true, nil
+		}
+	}
+	//defer db.Close()
+}
+
 func DelFirma(id int) error {
 	fmt.Printf("DelFirma got to delete Id: %d\n", id)
 	db, err := sql.Open("mysql", DBUser+":"+DBPassword+"@tcp("+DBHost+":"+DBPort+")/"+DBName)

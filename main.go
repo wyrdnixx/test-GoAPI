@@ -54,7 +54,7 @@ func checkUserCookie(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	fmt.Printf("checkUserCookie got: %s\n", string(reqBody))
 	if err != nil {
-		fmt.Printf("error checking cookie: ", err.Error())
+		fmt.Printf("error checking cookie: %v", err.Error())
 		res.Msg = "cookieValid"
 		res.Value = false
 
