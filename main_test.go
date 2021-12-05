@@ -39,13 +39,15 @@ func TestCookieID(t *testing.T) {
 	// insert into cookieIds (Id) values ("de070071-0b1a-45a5-84d0-cc89d631a960");
 
 	goodID := "de070071-0b1a-45a5-84d0-cc89d631a960"
+
+	//pendingID := "de070071-0b1a-45a5-84d0-pending"
 	badID := "FALSE-COOKIE-45a5-84d0-cc89d631a960"
 
 	resGood, err := lib.CheckCookie(goodID)
 	if err != nil {
 		t.Fatalf(`TestCookieId - Error: %v`, err.Error())
 	} else {
-		if resGood == true {
+		if resGood.Status == "valid" {
 			t.Log("TestCookieId - goodId Ok")
 		} else {
 			t.Fatalf("TestCookieId - goodId failed - didn't got $true")
@@ -53,16 +55,9 @@ func TestCookieID(t *testing.T) {
 	}
 
 	resBad, err := lib.CheckCookie(badID)
-	if err != nil {
-		t.Fatalf("TestCookieId - Error: %v", err.Error())
-	} else {
-		if resBad == false {
-			t.Log("TestCookieId - BadID Ok")
-		} else {
-			t.Fatalf("TestCookieId - BadID failed - didn't got $false")
-		}
-	}
-
+	if err.Error() != "CookieNotFound" {
+		t.Fatalf("TestCookieId - BadID failed -  got : %v ", resBad.Id)
+	
 }
 
 // TestHelloEmpty calls greetings.Hello with an empty string,

@@ -1,5 +1,10 @@
 package models
 
+type Cookie struct {
+	Id     string `json:"Id"`
+	Status string `json:"Status"`
+}
+
 // Configuration -  Allgemeine Config
 type Configuration struct {
 	ApiPort    string

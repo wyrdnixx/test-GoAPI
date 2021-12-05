@@ -68,9 +68,9 @@ export default{
         },
         checkCookiewithserver() {
 
-             // test valid cookie : de070071-0b1a-45a5-84d0-cc89d631a960
-             this.UserCookie.id = "Xde070071-0b1a-45a5-84d0-cc89d631a960"
-
+            //this.UserCookie.id = "de070071-0b1a-45a5-84d0-cc89d631a960"
+            //this.UserCookie.id = "de070071-0b1a-45a5-84d0-invalid"
+            this.UserCookie.id = "de070071-0b1a-45a5-84d0-pending"
              
              axios.post(this.$parent.apiURL + "/checkUserCookie", {
            

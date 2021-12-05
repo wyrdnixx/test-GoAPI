@@ -48,15 +48,19 @@ func checkUserCookie(w http.ResponseWriter, r *http.Request) {
 	EnableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 
-	res := Result{}
+	//res := Result{}
+	c := models.Cookie{}
 	var checkUUID Uuid
 
 	reqBody, err := ioutil.ReadAll(r.Body)
 	fmt.Printf("checkUserCookie got: %s\n", string(reqBody))
 	if err != nil {
 		fmt.Printf("error checking cookie: %v", err.Error())
-		res.Msg = "cookieValid"
-		res.Value = false
+		//res.Msg = "cookieValid"
+		//res.Value = false
+
+		c.Id = "-"
+		c.Status = err.Error()
 
 		//json.NewEncoder(w).Encode(res)
 	} else {
@@ -64,24 +68,31 @@ func checkUserCookie(w http.ResponseWriter, r *http.Request) {
 		err := json.Unmarshal(reqBody, &checkUUID)
 		if err != nil {
 			fmt.Println("Json decoder checkUUID error: ", err.Error())
-			res.Msg = "cookieValid"
-			res.Value = false
+			//res.Msg = "cookieValid"
+			//res.Value = false
+
+			c.Status = err.Error()
 
 		} else {
 			fmt.Println("checkUserUUID: ", checkUUID.Id)
-			if checkUserUUID(checkUUID.Id) {
-				res.Msg = "cookieValid"
-				res.Value = true
-			} else {
-				res.Msg = "cookieValid"
-				res.Value = true
+			cTemp, err := lib.CheckCookie(checkUUID.Id)
+			c = cTemp // copy result to returned cookie
+			if err != nil {
+				fmt.Println("checkCookie error: ", err.Error())
+
+				c.Status = string(err.Error())
+				fmt.Println("checkCookie error string : ", c.Status)
 			}
 
 		}
 
 	}
 
-	response, err := json.Marshal(res)
+	//	c.Id = "test"
+	//	c.Status = "teststatis"
+	fmt.Println("checkCookie vor response string : ", c)
+	response, err := json.Marshal(c)
+
 	if err != nil {
 		fmt.Println("checkUserCookie : Error convert response to json: ", err.Error())
 	}
@@ -95,6 +106,7 @@ func checkUserCookie(w http.ResponseWriter, r *http.Request) {
 	//json.NewEncoder(w).Encode(res)
 }
 
+/*
 func checkUserUUID(c string) bool {
 	if c == "de070071-0b1a-45a5-84d0-cc89d631a960" {
 		return true
@@ -102,6 +114,7 @@ func checkUserUUID(c string) bool {
 		return false
 	}
 }
+*/
 
 func createFirma(w http.ResponseWriter, r *http.Request) {
 	EnableCors(&w)

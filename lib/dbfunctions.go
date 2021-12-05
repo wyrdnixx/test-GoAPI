@@ -99,33 +99,31 @@ func GetFirmen() (models.Firmen, error) {
 	return firmen, nil
 }
 
-func CheckCookie(id string) (bool, error) {
+func CheckCookie(id string) (models.Cookie, error) {
 
 	db, err := sql.Open("mysql", DBUser+":"+DBPassword+"@tcp("+DBHost+":"+DBPort+")/"+DBName)
-	type ResultId struct {
-		id string
-	}
-	var resultId ResultId
+	var c models.Cookie
 
 	fmt.Println("Testing cookieId: ", id)
 	if err != nil {
 		fmt.Printf("ERROR: DB Connection: %S \n" + err.Error())
-		return false, err
+		return c, err
 		//		log.Fatal(4, "ERROR: DB Connection: "+err.Error())
 
 	} else {
-		err := db.QueryRow("select * from cookieIds where Id = \"" + id + "\";").Scan(&resultId.id)
+
+		err := db.QueryRow("select * from cookies where Id = \""+id+"\";").Scan(&c.Id, &c.Status)
 		if err != nil && err != sql.ErrNoRows {
 			fmt.Printf("ERROR: DB Select: %S \n" + err.Error())
 
-			return false, err
+			return c, err
 		} else if err == sql.ErrNoRows {
 			fmt.Println("Requested cookieId not found")
-			return false, nil
+			return c, errors.New("CookieNotFound")
 		} else {
-			fmt.Println("checkCookie SQL Result: ", resultId)
+			fmt.Println("checkCookie SQL Result: ", c.Id, c.Status)
 
-			return true, nil
+			return c, nil
 		}
 	}
 	//defer db.Close()
