@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"onboarding/lib"
 	"onboarding/tcpserver"
 	"testing"
+
+	"github.com/NaySoftware/go-fcm"
 )
 
 var testmsg = `MSH|^~\&|DPS||PHILIPS||202107101353||ADT^A08|0035648|P|2.3|||AL|NE
@@ -57,16 +60,48 @@ func TestCookieID(t *testing.T) {
 	resBad, err := lib.CheckCookie(badID)
 	if err.Error() != "CookieNotFound" {
 		t.Fatalf("TestCookieId - BadID failed -  got : %v ", resBad.Id)
-	
+
+	}
+
+	// TestHelloEmpty calls greetings.Hello with an empty string,
+	// checking for an error.
+	/*
+	   func TestHelloEmpty(t *testing.T) {
+	   	msg, err := Hello("")
+	   	if msg != "" || err == nil {
+	   		t.Fatalf(`Hello("") = %q, %v, want "", error`, msg, err)
+	   	}
+	   }
+	*/
 }
 
-// TestHelloEmpty calls greetings.Hello with an empty string,
-// checking for an error.
-/*
-func TestHelloEmpty(t *testing.T) {
-	msg, err := Hello("")
-	if msg != "" || err == nil {
-		t.Fatalf(`Hello("") = %q, %v, want "", error`, msg, err)
+const (
+	apiKey = "AIzaSyBg6v9qNqSFPFJyOJef5zi8c8jPdfKouy8"
+	/*
+		authDomain: "testdb-6b732.firebaseapp.com",
+		projectId: "testdb-6b732",
+		storageBucket: "testdb-6b732.appspot.com",
+		messagingSenderId: "147079647684",
+		appId: "1:147079647684:web:3c463ba006487b95edd491"
+	*/
+
+)
+
+func testFirebird() {
+
+	data := map[string]string{
+		"msg": "Hello World1",
+		"sum": "Happy Day",
+	}
+
+	c := fcm.NewFcmClient(apiKey)
+	c.NewFcmMsgTo(topic, data)
+
+	status, err := c.Send()
+
+	if err == nil {
+		status.PrintResults()
+	} else {
+		fmt.Println(err)
 	}
 }
-*/

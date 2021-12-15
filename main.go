@@ -168,12 +168,59 @@ func delFirma(w http.ResponseWriter, r *http.Request) {
 	//fmt.Printf("delFirma got: %s \n", r.Body)
 }
 
+type event struct {
+	ID        string `json:"ID"`
+	Type      string `json:"Type"`
+	EventData []byte `json:"EventData"`
+}
+type newAuthRequest struct {
+	Username string `njson:"Username"`
+	DeviceID string `njson:"DeviceID"`
+}
+
+func jsonapi(w http.ResponseWriter, r *http.Request) {
+	EnableCors(&w)
+	var newEvent event
+	reqBody, err := ioutil.ReadAll(r.Body)
+	fmt.Printf("jsonApi Got: :%v\n", string(reqBody))
+	if err != nil {
+		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
+	}
+
+	json.Unmarshal(reqBody, &newEvent)
+	if newEvent.Type == "ExampleCreateRequest" {
+		var na newAuthRequest
+
+		// Decode the json object
+		var j map[string]interface{}
+		err2 := json.Unmarshal([]byte(reqBody), &j)
+		if err2 != nil {
+			panic(err)
+		}
+		parents, noErr := j["EventData"].(map[string]interface{})
+		if noErr != true {
+			fmt.Printf("Wrong object\n")
+		} else {
+			fmt.Printf("-> %v\n", parents["Username"])
+			fmt.Printf("-> %v\n", parents["DeviceID"])
+			na.Username = parents["Username"].(string)
+			na.DeviceID = parents["DeviceID"].(string)
+			fmt.Printf("type: %v - %v \n", na.Username, na.DeviceID)
+		}
+
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(newEvent)
+}
+
 func main() {
 
 	// HL7 Listener
 	hl7server := tcpserver.NewServer(&tcpserver.Config{
 		Host: "0.0.0.0",
-		Port: "666",
+		Port: "6661",
 	})
 	go hl7server.Run()
 
@@ -183,6 +230,7 @@ func main() {
 	// WEbAPI Router
 	router := mux.NewRouter()
 
+	router.HandleFunc("/api/jsonapi", jsonapi)
 	router.HandleFunc("/api/delFirma", delFirma)
 	router.HandleFunc("/api/createFirma", createFirma)
 	router.HandleFunc("/api/checkUserCookie", checkUserCookie)
